@@ -1,0 +1,52 @@
+<canvas id="qr-canvas"></canvas>
+
+<script src="require_zxing_compiled.js"></script>
+
+<script>
+var img = new Image();
+
+var can = document.getElementById('qr-canvas');
+var ctx = can.getContext('2d');
+
+img.onload = function(){
+  can.width = img.width;
+  can.height = img.height;
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+
+
+  var footer = document.getElementsByTagName('footer')[0];
+
+  qrcode.debug = false;
+  qrcode.decode(function(err, result) {
+    if (err != null) {
+      footer.innerHTML = 'detection failed: ' + error;
+      console.error(err);
+    }
+    else {
+      footer.innerHTML = 'found something: ' + result;
+      console.log("Found sth: " + result);
+    }
+  });
+}
+img.crossOrigin = "Anonymous";
+
+// First doesn't work and has troubles other times: transparency??
+//img.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Wikipedia_mobile_en.svg/200px-Wikipedia_mobile_en.svg.png';
+
+// Works fine
+// img.src = "https://upload.wikimedia.org/wikipedia/commons/d/d7/Commons_QR_code.png";
+
+// Works too (synthetic)
+//img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Jebel_Musa_QRcode.jpg/293px-Jebel_Musa_QRcode.jpg";
+
+// Not working, too hard.
+//img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Japan-qr-code-billboard.jpg/360px-Japan-qr-code-billboard.jpg";
+
+// This has many different 2D codes.
+// img.src = "https://upload.wikimedia.org/wikipedia/commons/c/cb/Codes4.png"
+
+//img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Azteccodeexample.svg/184px-Azteccodeexample.svg.png"
+
+img.src = "https://upload.wikimedia.org/wikipedia/en/f/f4/LiveBarcodeApp.jpg";
+</script>
+<footer></footer>
