@@ -22,6 +22,8 @@ if (typeof BarcodeDetector === 'undefined') {
           return;
         }
 
+        // ZXing likes to get the data from a canvas element called "qr-canvas".
+        // Dump |image| therem then just call qrcode.decode().
         var canv = document.createElement("canvas");
         canv.setAttribute("id", "qr-canvas");
         canv.style.visibility = "hidden";
@@ -36,11 +38,10 @@ if (typeof BarcodeDetector === 'undefined') {
         qrcode.decode(function(err, result) {
           if (err != null) {
             console.error(err);
-            reject(new DOMException('OperationError'));
-
+            reject(new DOMException('OperationError', error));
           } else {
-            // Replicate DetectedBarcode; The library only provides |rawValue|
-            // and a single detected barcode.
+            // Replicate sequence<DetectedBarcode> response; ZXing library only
+            // provides a single detected |rawValue| barcode (no position).
             var detectedBarcode = new Object;
             detectedBarcode.rawValue = result;
             detectedBarcode.boundingBox = undefined;

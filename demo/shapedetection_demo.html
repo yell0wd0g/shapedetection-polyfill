@@ -1,0 +1,46 @@
+<body>
+<!-- onfocus trick to get onchange events also when nothing changes-->
+<select id="code" onfocus="this.selectedIndex = -1;">
+  <option value="https://upload.wikimedia.org/wikipedia/commons/d/d7/Commons_QR_code.png">A QR Code</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/4/46/Harzhorn_QR_Code_Wikipedia.jpg">Another QR</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Japan-qr-code-billboard.jpg/360px-Japan-qr-code-billboard.jpg">Slanted QR (not working with ZXing)</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/c/cb/Codes4.png">A number of 2D codes</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Azteccodeexample.svg/184px-Azteccodeexample.svg.png">Aztec code (not working in ZXing)</option>
+  <option value="https://upload.wikimedia.org/wikipedia/en/f/f4/LiveBarcodeApp.jpg">Another QR code in its habitat</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Wikipedia_mobile_en.svg/200px-Wikipedia_mobile_en.svg.png">Not working QR (transparency?)</option>
+</select>
+
+<script src="require_zxing_compiled.0.1.1.js"></script>
+
+<script src="../src/shapedetection.js"></script>
+
+<script>
+var videoSelect = document.querySelector('select#code');
+videoSelect.onchange = () => {
+  var img = new Image();
+  img.crossOrigin = "Anonymous";
+  document.body.appendChild(img);
+
+  img.onload = function() {
+
+    var footer = document.getElementsByTagName('footer')[0];
+
+    var bc = new BarcodeDetector();
+
+    bc.detect(img)
+        .then((barcodes) => {
+   	      for(var i = 0; i < barcodes.length; i++) {
+            footer.innerHTML = '+ found: ' + barcodes[i].rawValue + '\n';
+            console.log('Found barcode: ' + barcodes[i].rawValue + '\n');
+          }
+        })
+        .catch( (error) => {
+          footer.innerHTML = 'detection failed: ' + error;
+          console.error(error);
+        });
+  }
+  img.src = videoSelect.value;
+}
+</script>
+</body>
+<footer></footer>
