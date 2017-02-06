@@ -1,5 +1,5 @@
-// ShapeDetection polyfill.  Relies on zxing node package loaded already.
-// Only QR codes supported.
+// ShapeDetection polyfill.
+// Uses zxing for barcode detection fallback. This supports only QR codes.
 
 export let BarcodeDetector = window.BarcodeDetector;
 

@@ -1,5 +1,4 @@
 
-//require('./require_zxing_compiled.0.1.1.js');
 require('zxing');
 require('../src/shapedetection.js');
 
