@@ -1,7 +1,9 @@
 // ShapeDetection polyfill.  Relies on zxing node package loaded already.
 // Only QR codes supported.
 
-if (typeof window.BarcodeDetector === 'undefined') {
+export let BarcodeDetector = window.BarcodeDetector;
+
+if (typeof BarcodeDetector === 'undefined') {
 
   // https://wicg.github.io/shape-detection-api/#barcode-detection-api
   BarcodeDetector = class {
