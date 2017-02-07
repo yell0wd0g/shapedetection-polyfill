@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - '5'
   - '4'
+before_script:
+  - npm install -g zxing
 script:
     # Call script for deploying the demo(s).
   - bash ./.travis-deploy.sh
