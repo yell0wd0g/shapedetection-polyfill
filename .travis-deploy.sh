@@ -18,7 +18,7 @@ git init
 git config user.name "Travis CI"
 git config user.email "miguelecasassanchez@gmail.compiled"
 
-git remote add upstream "https://$GH_TOKEN@github.com:miguelao/shapedetection-polyfill.git"
+git remote add upstream "https://$GH_TOKEN@github.com/miguelao/shapedetection-polyfill.git"
 git fetch upstream -v
 REV=$(git rev-parse --short HEAD)
 

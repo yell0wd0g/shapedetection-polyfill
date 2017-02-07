@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - '5'
-  - '4'
 script:
     # Call script for deploying the demo(s).
   - bash ./.travis-deploy.sh
