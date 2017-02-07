@@ -6,3 +6,9 @@ The [WICG Shape Detection](https://wicg.github.io/shape-detection-api) specifica
 
 This polyfill bridges the gaps among browsers and platforms since not all provide the same capabilities.
 
+
+# Demo
+
+* [Barcode detection demo](https://miguelao.github.io/shapedetection-polyfill/demo.bundle.html) created from this very repository.
+
+
