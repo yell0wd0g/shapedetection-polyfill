@@ -12,6 +12,7 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 SUPER_REPO="https://$GH_TOKEN@github.com/miguelao/shapedetection-polyfill.git"
+
 # Run WebPack to generate a bundled client-side js file.
 webpack --display-error-details
 
@@ -25,5 +26,5 @@ git config user.email "miguelecasassanchez@gmail.compiled"
 cp -f ../demo/demo.bundle.* ./
 
 git add .
-git commit -m "Auto deploy $(SHA) to github pages"
+git commit -m "Auto deploy ${SHA} to GitHub pages branch"
 git push --force --quiet $SUPER_REPO master:gh-pages
