@@ -5,3 +5,6 @@ node_js:
 script:
     # Call script for deploying the demo(s).
   - bash ./.travis-deploy.sh
+env:
+  global:
+    - secure: "a/vLIvfOWpssLfSNIUfO87WEzRHmcU1jbC5xbeS9/ppPuAtAOdO88tRISljcqY55Cd3xzOb6gDixRrvGvuGtnSuIN9XDNB2rXHURs3X5EVH2D66ehFY3fdpcF0SrU82YCWB4q2LJIhj3eqRUi5iYXxA+U6thp0zghCSy5NFW2EvyZYBJquNY2e6NZBnSx4Od9n/GUv9z+CxDxEtoOK/IrIAAgziMc3vyicl6oI9yLu/yVbhwcVfrCYeNx1FNtPCxlYxRtuGAAKZP9dnJPS2zYyBHeTOJjPBMcM6gwO0ReQPMYC2qs2fx3Lsm1x0xch4Epf2ugm9gC1Fa0ANVN5MMVF2BGxWlAlUMTPY+NcHBOv9kCAFDbXNOBPVQpOnIOizuFxoKDUagEKn5DXHwSVNYq9vKRta9RKDyYqj6oJ++q+ve8U+v3mw82FH3CPr8aHW0ki/a3HfGWEycRrPEDQNccKzxIk/lM8vhWBFpml8dsLI6Ck3mT4axYGZXKztMJ69F4XOAvroBMv+0zzxTy+1v4Hd9V/k6sT3NXyL/Q2O27sEuNeeSlDF/PzumwKMWe4PQfTcp8ThKtvZ1Ep4dOg1yxPQjuJ8/P1iSOzl4oMJk2WHc1Ie6A8gfeoDZ60V2OFKd9JH6LqMI8aRrLtlvUfP84iQSLi34kz0EFviAHlg5mGc="
