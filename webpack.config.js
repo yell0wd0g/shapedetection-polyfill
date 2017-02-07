@@ -6,9 +6,4 @@ module.exports = {
     path: './demo',
     filename: 'demo.bundle.js'
   },
-  resolve: {
-  	modules: [
-  	  path.resolve('/usr/local/lib/node_modules')
-  	]
-  }
 };
