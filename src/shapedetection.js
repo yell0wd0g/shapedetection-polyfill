@@ -1,9 +1,9 @@
 // ShapeDetection polyfill.
 // Uses zxing for barcode detection fallback. This supports only QR codes.
 
-export let BarcodeDetector = window.BarcodeDetector;
+export var BarcodeDetector = window.BarcodeDetector;
 
-if (typeof BarcodeDetector === 'undefined') {
+if (typeof window.BarcodeDetector === 'undefined') {
 
   // https://wicg.github.io/shape-detection-api/#barcode-detection-api
   BarcodeDetector = class {
@@ -17,10 +17,9 @@ if (typeof BarcodeDetector === 'undefined') {
       return new Promise(function executorBCD(resolve, reject) {
 
         // |qrcode| should be defined by `qrcode = require('zxing');`
-        if (typeof qrcode === 'undefined') {
-          reject(new DOMException("NotFoundError", "|qrcode| not found"));
-          return;
-        }
+        // TODO(mcasas): I'm not sure if this won't load zxing every time.
+        if (typeof qrcode === 'undefined')
+          var qrcode = require('zxing');
 
         // ZXing likes to get the data from a canvas element called "qr-canvas".
         // Dump |image| therem then just call qrcode.decode().
@@ -50,8 +49,9 @@ if (typeof BarcodeDetector === 'undefined') {
           }
         });
 
+        // Remove the "qr-canvas" element from the document.
+        canv.parentNode.removeChild(canv);
       });
     }
-
   };
 }

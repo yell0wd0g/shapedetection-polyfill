@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "description": "Web ShapeDetection (QR Codes, Text, more) polyfill",
   "main": "src/shapedetection.js",
+  "jsnext:main": "src/shapedetection.js",
   "scripts": {
     "lint": "eslint src/*.js docs/index.js",
     "dev": "webpack-dev-server --progress --colors",
-    "lt": "lt --port 8080 --subdomain imagecapture",
+    "lt": "lt --port 8080 --subdomain shapedetection",
     "docs": "webpack"
   },
   "repository": {

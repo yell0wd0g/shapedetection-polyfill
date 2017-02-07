@@ -1,6 +1,8 @@
 
-require('zxing');
-require('../src/shapedetection.js');
+var qrcode = require('zxing');
+
+var shapedetection = require('../src/shapedetection.js');
+var BarcodeDetector = shapedetection.BarcodeDetector;
 
 var urlSelect = document.querySelector('select#code');
 urlSelect.onchange = () => {
@@ -11,12 +13,11 @@ urlSelect.onchange = () => {
   img.onload = function() {
 
     var footer = document.getElementsByTagName('footer')[0];
-
     var bc = new BarcodeDetector();
 
     bc.detect(img)
         .then((barcodes) => {
-   	      for(var i = 0; i < barcodes.length; i++) {
+          for(var i = 0; i < barcodes.length; i++) {
             if (footer !== 'undefined')
               footer.innerHTML = '+ found: ' + barcodes[i].rawValue + '\n';
             console.log('Found sth: ' + barcodes[i].rawValue + '\n');
