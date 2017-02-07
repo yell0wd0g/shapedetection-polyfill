@@ -11,6 +11,10 @@ REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
+SUPER_REPO="https://$GH_TOKEN@github.com/miguelao/shapedetection-polyfill.git"
+# Run WebPack to generate a bundled client-side js file.
+webpack --display-error-details
+
 mkdir out
 cd out
 
@@ -18,15 +22,8 @@ git init
 git config user.name "Travis CI"
 git config user.email "miguelecasassanchez@gmail.compiled"
 
-git remote add upstream "https://$GH_TOKEN@github.com/miguelao/shapedetection-polyfill.git"
-git fetch upstream -v
-REV=$(git rev-parse --short HEAD)
+cp -f ../demo/demo.bundle.* ./
 
-# If there are no changes to the compiled out (e.g. this is a README update) then just bail.
-if [ -z `git diff --exit-code` ]; then
-    echo "No changes to the output on this push; exiting."
-    exit 0
-fi
-
-# Run WebPack to generate a bundled client-side js file.
-webpack --display-error-details
+git add .
+git commit -m "Auto deploy $(SHA) to github pages"
+git push --force --quiet $SUPER_REPO master:gh-pages
