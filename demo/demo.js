@@ -1,6 +1,4 @@
 
-var qrcode = require('zxing');
-
 var shapedetection = require('../src/shapedetection.js');
 var BarcodeDetector = shapedetection.BarcodeDetector;
 
