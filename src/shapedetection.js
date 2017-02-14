@@ -17,13 +17,10 @@ if (typeof window.BarcodeDetector === 'undefined') {
         if (typeof this._quagga === 'undefined')
           this._quagga = require('quagga');
 
-        this._debug = true;
-    }
+        if (typeof this._join === 'undefined')
+          this._join = require("bluebird").join;
 
-    detect(image) {
-      var that = this;
-      return Promise.all([that.detectQRCodes(image), that.detectBarcodes(image)]
-          .map(p => p.catch(e => e)));
+        this._debug = true;
     }
 
     /**
@@ -31,11 +28,26 @@ if (typeof window.BarcodeDetector === 'undefined') {
      * @param {ImageBitmapSource} image - Image/Video/Canvas input.
      * @returns {Promise<sequence<DetectedBarcode>>} Fulfilled promise with detected codes.
      */
+    detect(image) {
+      var that = this;
+      return that._join(that.detectQRCodes(image), that.detectBarcodes(image),
+        function(qrCodes, barCodes) {
+          var result = [];
+          console.log('joined ' + qrCodes + ' and ' + barCodes);
+          if ('rawValue' in qrCodes[0])
+            result = result.concat(qrCodes);
+          if ('rawValue' in barCodes[0])
+            result = result.concat(barCodes);
+          return result;
+      });
+    }
+
     detectQRCodes(image) {
       var that = this;
-      return new Promise(function executorBCD(resolve, reject) {
+      return new Promise(function executorQRD(resolve, reject) {
 
-        var canv = document.createElement("canvas");
+        var canv = document.getElementById('qr-canvas') ||
+                   document.createElement("canvas");
         canv.setAttribute("id", "qr-canvas");
         canv.style.visibility = "hidden";
         document.body.appendChild(canv);
@@ -49,22 +61,21 @@ if (typeof window.BarcodeDetector === 'undefined') {
 
         that._qrcode.debug = false;
         that._qrcode.decode(function(err, result) {
+          var detectedBarcode = new Object;
+          detectedBarcode.boundingBox = undefined;
+          detectedBarcode.cornerPoints = [];
           if (err != null) {
-            console.error(err);
-            reject(new DOMException('OperationError', err));
+            console.error('no qr codes detected: ' + err);
           } else {
-            console.log("detected: ", result);
+            console.log("qr detected: ", result);
             // Replicate sequence<DetectedBarcode> response; ZXing library only
             // provides a single detected |rawValue| barcode (no position).
-            var detectedBarcode = new Object;
             detectedBarcode.rawValue = result;
-            detectedBarcode.boundingBox = undefined;
-            detectedBarcode.cornerPoints = [];
-            resolve( [detectedBarcode] );
           }
+          resolve( [detectedBarcode] );
 
-        // Remove the "qr-canvas" element from the document.
-        canv.parentNode.removeChild(canv);
+          // Remove the "qr-canvas" element from the document.
+          canv.parentNode.removeChild(canv);
         });
       });
     };
@@ -73,8 +84,9 @@ if (typeof window.BarcodeDetector === 'undefined') {
       var that = this;
       return new Promise(function executorBCD(resolve, reject) {
 
-        var canv = document.createElement("canvas");
-        canv.setAttribute("id", "temp-canvas");
+        var canv = document.getElementById('barcode-canvas') ||
+                   document.createElement("canvas");
+        canv.setAttribute("id", "barcode-canvas");
         if (!that._debug)
           canv.style.visibility = "hidden";
         document.body.appendChild(canv);
@@ -106,10 +118,9 @@ if (typeof window.BarcodeDetector === 'undefined') {
               console.log("detected: ", result.codeResult.code);
               detectedBarcode.rawValue = result.codeResult.code;
             }
-            resolve( [detectedBarcode] );
 
             if (that._debug) {
-              var ctx = document.getElementById('temp-canvas').getContext("2d");
+              var ctx = document.getElementById('barcode-canvas').getContext("2d");
               ctx.beginPath();
               ctx.lineWidth = 2;
               ctx.strokeStyle = "yellow";
@@ -130,9 +141,10 @@ if (typeof window.BarcodeDetector === 'undefined') {
             }
 
           } else {
-            console.error("not detected");
-            reject(new DOMException('OperationError', "nothing found"));
+            console.error("no barcodes detected");
           }
+
+          resolve( [detectedBarcode] );
         });
 
         if (!that._debug) {
