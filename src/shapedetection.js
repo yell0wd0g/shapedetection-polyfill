@@ -33,7 +33,6 @@ if (typeof window.BarcodeDetector === 'undefined') {
       return that._join(that.detectQRCodes(image), that.detectBarcodes(image),
         function(qrCodes, barCodes) {
           var result = [];
-          console.log('joined ' + qrCodes + ' and ' + barCodes);
           if ('rawValue' in qrCodes[0])
             result = result.concat(qrCodes);
           if ('rawValue' in barCodes[0])
@@ -42,6 +41,12 @@ if (typeof window.BarcodeDetector === 'undefined') {
       });
     }
 
+    /**
+     QR Code detection is based on ZXing port to JS; provides the decoded string
+     but no |boundingBox| nor |cornerPoints|: These are always undefined and an
+     emtpy string, respectively.  If anything is detected, |rawValue| will have
+     the decoded data, otherwise it's not defined.
+     */
     detectQRCodes(image) {
       var that = this;
       return new Promise(function executorQRD(resolve, reject) {
@@ -80,6 +85,12 @@ if (typeof window.BarcodeDetector === 'undefined') {
       });
     };
 
+    /**
+     Barcode detection is based on ZXing port to JS; provides the decoded string
+     but no |boundingBox| nor |cornerPoints|: These are always undefined and an
+     emtpy string, respectively.  If anything is detected, |rawValue| will have
+     the decoded data, otherwise it's not defined.
+     */
     detectBarcodes(image) {
       var that = this;
       return new Promise(function executorBCD(resolve, reject) {
@@ -123,7 +134,7 @@ if (typeof window.BarcodeDetector === 'undefined') {
               var ctx = document.getElementById('barcode-canvas').getContext("2d");
               ctx.beginPath();
               ctx.lineWidth = 2;
-              ctx.strokeStyle = "yellow";
+              ctx.strokeStyle = "red";
               for(var i = 0; i < result.boxes.length; i++) {
                 ctx.moveTo(Math.floor(result.boxes[i][0][0]),
                            Math.floor(result.boxes[i][0][1]));
