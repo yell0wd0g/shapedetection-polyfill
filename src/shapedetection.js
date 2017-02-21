@@ -18,7 +18,7 @@ if (typeof window.BarcodeDetector === 'undefined') {
           this._quagga = require('quagga');
 
         if (typeof this._join === 'undefined')
-          this._join = require("bluebird").join;
+          this._join = require('bluebird').join;
 
         this._debug = true;
     }
@@ -51,19 +51,6 @@ if (typeof window.BarcodeDetector === 'undefined') {
       var that = this;
       return new Promise(function executorQRD(resolve, reject) {
 
-        var canv = document.getElementById('qr-canvas') ||
-                   document.createElement("canvas");
-        canv.setAttribute("id", "qr-canvas");
-        canv.style.visibility = "hidden";
-        document.body.appendChild(canv);
-
-        // ZXing likes to get the data from a canvas element called "qr-canvas".
-        // Dump |image| there and then just call qrcode.decode().
-        var ctx = canv.getContext('2d');
-        canv.width = image.width;
-        canv.height = image.height;
-        ctx.drawImage(image, 0, 0, image.width, image.height);
-
         that._qrcode.callback = function(result, err) {
           var detectedBarcode = new Object;
           detectedBarcode.boundingBox = undefined;
@@ -72,7 +59,7 @@ if (typeof window.BarcodeDetector === 'undefined') {
             console.error('no qr codes detected: ' + err);
           } else {
             // |result.url| contains the decoded string, be that a url or not.
-            console.log("qr detected: ", result.url);
+            console.log('qr detected: ', result.url);
             detectedBarcode.rawValue = result.url;
 
             detectedBarcode.cornerPoints = [
@@ -82,11 +69,8 @@ if (typeof window.BarcodeDetector === 'undefined') {
                 { x: result.points[3].X, y:result.points[3].Y }];
           }
           resolve( [detectedBarcode] );
-
-          // Remove the "qr-canvas" element from the document.
-          canv.parentNode.removeChild(canv);
         };
-        that._qrcode.decode();
+        that._qrcode.decode(that.getImageAsBase64(image));
       });
     };
 
@@ -99,28 +83,20 @@ if (typeof window.BarcodeDetector === 'undefined') {
     detectBarcodes(image) {
       var that = this;
       return new Promise(function executorBCD(resolve, reject) {
+        const what = that.getImageAsBase64(image);
 
-        var canv = document.getElementById('barcode-canvas') ||
-                   document.createElement("canvas");
-        canv.setAttribute("id", "barcode-canvas");
-        canv.style.visibility = "hidden";
-        document.body.appendChild(canv);
-        var ctx = canv.getContext('2d');
-        canv.width = image.width;
-        canv.height = image.height;
-        ctx.drawImage(image, 0, 0, image.width, image.height);
-
-        const what = canv.toDataURL();
         that._quagga.decodeSingle({
           src: what,
           numOfWorkers: 0,  // Needs to be 0 when used within node
           locate: true,
-          inputStream: { size: canv.width > canv.height ? canv.width : canv.height },
+          inputStream: {
+              size: image.width > image.height ? image.width : image.height
+          },
           decoder: {
             readers : [
-              "upc_reader", "code_128_reader", "code_39_reader",
-              "code_39_vin_reader", "ean_8_reader", "ean_reader", "upc_e_reader",
-              "codabar_reader"
+              'upc_reader', 'code_128_reader', 'code_39_reader',
+              'code_39_vin_reader', 'ean_8_reader', 'ean_reader',
+              'upc_e_reader', 'codabar_reader'
             ]
           },
           multiple: true,
@@ -130,7 +106,7 @@ if (typeof window.BarcodeDetector === 'undefined') {
           detectedBarcode.cornerPoints = [];
           if(result) {
             if (result.codeResult) {
-              console.log("detected: ", result.codeResult.code);
+              console.log('detected: ', result.codeResult.code);
               detectedBarcode.rawValue = result.codeResult.code;
 
               detectedBarcode.cornerPoints = [
@@ -141,15 +117,25 @@ if (typeof window.BarcodeDetector === 'undefined') {
             }
 
           } else {
-            console.error("no barcodes detected");
+            console.error('no barcodes detected');
           }
 
           resolve( [detectedBarcode] );
         });
 
-        // Remove the "temp-canvas" element from the document.
-        canv.parentNode.removeChild(canv);
       });
+    };
+
+    getImageAsBase64(image) {
+      var canvas = document.createElement('canvas');
+      canvas.style.visibility = 'hidden';
+
+      var ctx = canvas.getContext('2d');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0, image.width, image.height);
+
+      return canvas.toDataURL();
     };
   };
 }
