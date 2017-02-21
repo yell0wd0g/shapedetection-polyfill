@@ -1,5 +1,4 @@
 // ShapeDetection polyfill.
-// Uses zxing for barcode detection fallback. This supports only QR codes.
 
 export var BarcodeDetector = window.BarcodeDetector;
 
@@ -9,10 +8,11 @@ if (typeof window.BarcodeDetector === 'undefined') {
   BarcodeDetector = class {
 
     constructor() {
-        // |qrcode| should be defined by `qrcode = require('zxing');`
-        // TODO(mcasas): I'm not sure if this won't load zxing every time.
-        if (typeof this._qrcode === 'undefined')
-          this._qrcode = require('zxing');
+        // |qrcode| should be defined by `qrcode = require('qrcode-reader');`
+        if (typeof this._qrcode === 'undefined') {
+          var lib = require('qrcode-reader');
+          this._qrcode = new lib.default();
+        }
 
         if (typeof this._quagga === 'undefined')
           this._quagga = require('quagga');
@@ -64,24 +64,29 @@ if (typeof window.BarcodeDetector === 'undefined') {
         canv.height = image.height;
         ctx.drawImage(image, 0, 0, image.width, image.height);
 
-        that._qrcode.debug = false;
-        that._qrcode.decode(function(err, result) {
+        that._qrcode.callback = function(result, err) {
           var detectedBarcode = new Object;
           detectedBarcode.boundingBox = undefined;
           detectedBarcode.cornerPoints = [];
           if (err != null) {
             console.error('no qr codes detected: ' + err);
           } else {
-            console.log("qr detected: ", result);
-            // Replicate sequence<DetectedBarcode> response; ZXing library only
-            // provides a single detected |rawValue| barcode (no position).
-            detectedBarcode.rawValue = result;
+            // |result.url| contains the decoded string, be that a url or not.
+            console.log("qr detected: ", result.url);
+            detectedBarcode.rawValue = result.url;
+
+            detectedBarcode.cornerPoints = [
+                { x: result.points[0].X, y:result.points[0].Y },
+                { x: result.points[1].X, y:result.points[1].Y },
+                { x: result.points[2].X, y:result.points[2].Y },
+                { x: result.points[3].X, y:result.points[3].Y }];
           }
           resolve( [detectedBarcode] );
 
           // Remove the "qr-canvas" element from the document.
           canv.parentNode.removeChild(canv);
-        });
+        };
+        that._qrcode.decode();
       });
     };
 
@@ -98,8 +103,7 @@ if (typeof window.BarcodeDetector === 'undefined') {
         var canv = document.getElementById('barcode-canvas') ||
                    document.createElement("canvas");
         canv.setAttribute("id", "barcode-canvas");
-        if (!that._debug)
-          canv.style.visibility = "hidden";
+        canv.style.visibility = "hidden";
         document.body.appendChild(canv);
         var ctx = canv.getContext('2d');
         canv.width = image.width;
@@ -128,27 +132,12 @@ if (typeof window.BarcodeDetector === 'undefined') {
             if (result.codeResult) {
               console.log("detected: ", result.codeResult.code);
               detectedBarcode.rawValue = result.codeResult.code;
-            }
 
-            if (that._debug) {
-              var ctx = document.getElementById('barcode-canvas').getContext("2d");
-              ctx.beginPath();
-              ctx.lineWidth = 2;
-              ctx.strokeStyle = "red";
-              for(var i = 0; i < result.boxes.length; i++) {
-                ctx.moveTo(Math.floor(result.boxes[i][0][0]),
-                           Math.floor(result.boxes[i][0][1]));
-                ctx.lineTo(Math.floor(result.boxes[i][1][0]),
-                           Math.floor(result.boxes[i][1][1]));
-                ctx.lineTo(Math.floor(result.boxes[i][2][0]),
-                           Math.floor(result.boxes[i][2][1]));
-                ctx.lineTo(Math.floor(result.boxes[i][3][0]),
-                           Math.floor(result.boxes[i][3][1]));
-                ctx.lineTo(Math.floor(result.boxes[i][0][0]),
-                           Math.floor(result.boxes[i][0][1]));
-                ctx.stroke();
-              }
-              ctx.closePath();
+              detectedBarcode.cornerPoints = [
+                  { x: result.boxes[0][0][0], y:result.boxes[0][0][1] },
+                  { x: result.boxes[0][1][0], y:result.boxes[0][1][1] },
+                  { x: result.boxes[0][2][0], y:result.boxes[0][2][1] },
+                  { x: result.boxes[0][3][0], y:result.boxes[0][3][1] }];
             }
 
           } else {
@@ -158,11 +147,8 @@ if (typeof window.BarcodeDetector === 'undefined') {
           resolve( [detectedBarcode] );
         });
 
-        if (!that._debug) {
-          // Remove the "temp-canvas" element from the document.
-          canv.parentNode.removeChild(canv);
-        }
-
+        // Remove the "temp-canvas" element from the document.
+        canv.parentNode.removeChild(canv);
       });
     };
   };
