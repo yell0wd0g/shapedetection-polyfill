@@ -13,26 +13,28 @@ urlSelect.onchange = () => {
   img.onload = function() {
 
     var footer = document.getElementsByTagName('footer')[0];
+    footer.innerHTML = '';
     var bc = new BarcodeDetector();
 
     bc.detect(img)
         .then((barcodes) => {
+          var canv = document.getElementById('result-canvas') ||
+                     document.createElement("canvas");
+          canv.setAttribute("id", "result-canvas");
+          document.body.appendChild(canv);
+
+          var ctx = canv.getContext('2d');
+          var img = document.getElementById('theImage');
+          canv.width = img.width;
+          canv.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+
           for(var i = 0; i < barcodes.length; i++) {
             if (footer !== 'undefined')
               footer.innerHTML += ' found: ' + barcodes[i].rawValue + '\n';
             if (barcodes[i].rawValue !== 'undefined')
               console.log('Found sth: ' + barcodes[i].rawValue + '\n');
             if (barcodes[i].cornerPoints !== 'undefined') {
-              var canv = document.getElementById('result-canvas') ||
-                         document.createElement("canvas");
-              canv.setAttribute("id", "result-canvas");
-              document.body.appendChild(canv);
-
-              var ctx = canv.getContext('2d');
-              var img = document.getElementById('theImage');
-              canv.width = img.width;
-              canv.height = img.height;
-              ctx.drawImage(img, 0, 0, img.width, img.height);
 
               ctx.beginPath();
               ctx.lineWidth = 2;
