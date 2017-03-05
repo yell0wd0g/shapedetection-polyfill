@@ -13,6 +13,8 @@ SHA=`git rev-parse --verify HEAD`
 
 SUPER_REPO="https://$GH_TOKEN@github.com/miguelao/shapedetection-polyfill.git"
 
+npm view qrcode-reader
+
 # Run WebPack to generate a bundled client-side js file.
 webpack --display-error-details
 
