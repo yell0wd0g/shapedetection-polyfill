@@ -17,9 +17,6 @@ if (typeof window.BarcodeDetector === 'undefined') {
         if (typeof this._quagga === 'undefined')
           this._quagga = require('quagga');
 
-        if (typeof this._join === 'undefined')
-          this._join = require('bluebird').join;
-
         this._debug = true;
     }
 
@@ -30,15 +27,20 @@ if (typeof window.BarcodeDetector === 'undefined') {
      */
     detect(image) {
       var that = this;
-      return that._join(that.detectQRCodes(image), that.detectBarcodes(image),
-        function(qrCodes, barCodes) {
-          var result = [];
-          if ('rawValue' in qrCodes[0])
-            result = result.concat(qrCodes);
-          if ('rawValue' in barCodes[0])
-            result = result.concat(barCodes);
-          return result;
-      });
+      var result = [];
+      var image = image;
+      return that.detectQRCodes(image)
+          .then((qrCodes) => {
+            if ('rawValue' in qrCodes[0])
+              result = result.concat(qrCodes);
+            return that.detectBarcodes(image)
+          })
+          .then((barCodes) => {
+            if ('rawValue' in barCodes[0])
+              result = result.concat(barCodes);
+            return result;
+          })
+          .catch(() => { console.error('Detection error'); })
     }
 
     /**
