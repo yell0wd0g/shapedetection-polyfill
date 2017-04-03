@@ -53,22 +53,24 @@ if (typeof window.BarcodeDetector === 'undefined') {
       var that = this;
       return new Promise(function executorQRD(resolve, reject) {
 
-        that._qrcode.callback = function(result, err) {
+        that._qrcode.callback = function(err, result) {
           var detectedBarcode = new Object;
           detectedBarcode.boundingBox = undefined;
           detectedBarcode.cornerPoints = [];
           if (err != null) {
             console.error('no qr codes detected: ' + err);
           } else {
-            // |result.url| contains the decoded string, be that a url or not.
-            console.log('qr detected: ', result.url);
-            detectedBarcode.rawValue = result.url;
+            // |result.result| contains the decoded string, url or otherwise.
+            console.log('qr detected: ', result.result);
+            detectedBarcode.rawValue = result.result;
 
-            detectedBarcode.cornerPoints = [
-                { x: result.points[0].X, y:result.points[0].Y },
-                { x: result.points[1].X, y:result.points[1].Y },
-                { x: result.points[2].X, y:result.points[2].Y },
-                { x: result.points[3].X, y:result.points[3].Y }];
+            if (result.points) {
+              detectedBarcode.cornerPoints = [
+                  { x: result.points[0].X, y:result.points[0].Y },
+                  { x: result.points[1].X, y:result.points[1].Y },
+                  { x: result.points[2].X, y:result.points[2].Y },
+                  { x: result.points[3].X, y:result.points[3].Y }];
+            }
           }
           resolve( [detectedBarcode] );
         };
