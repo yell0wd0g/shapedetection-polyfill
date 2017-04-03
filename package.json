@@ -1,6 +1,6 @@
 {
   "name": "shape-detection",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Web ShapeDetection (QR Codes, Text, more) polyfill",
   "main": "src/shapedetection.js",
   "jsnext:main": "src/shapedetection.js",
