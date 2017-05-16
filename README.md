@@ -9,6 +9,6 @@ This polyfill bridges the gaps among browsers and platforms since not all provid
 
 # Demo
 
-* [Barcode detection demo](https://miguelao.github.io/shapedetection-polyfill/demo.bundle.html) created from this very repository.
+* [Barcode detection demo](https://yellowdoge.github.io/shapedetection-polyfill/demo.bundle.html) created from this very repository.
 
 
