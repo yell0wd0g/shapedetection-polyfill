@@ -11,7 +11,7 @@ REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
-SUPER_REPO="https://$GH_TOKEN@github.com/miguelao/shapedetection-polyfill.git"
+SUPER_REPO="https://$GH_TOKEN@github.com/yellowdoge/shapedetection-polyfill.git"
 
 npm view qrcode-reader
 
