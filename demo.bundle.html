@@ -1,0 +1,19 @@
+<body>
+<!-- onfocus trick to get onchange events also when nothing changes-->
+<select id="code" onfocus="this.selectedIndex = -1;">
+  <option value="https://upload.wikimedia.org/wikipedia/commons/d/d7/Commons_QR_code.png">A QR Code</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/4/46/Harzhorn_QR_Code_Wikipedia.jpg">Another QR</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Japan-qr-code-billboard.jpg/360px-Japan-qr-code-billboard.jpg">Slanted QR (not working with ZXing)</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/c/cb/Codes4.png">A number of 2D codes</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Azteccodeexample.svg/184px-Azteccodeexample.svg.png">Aztec code (not working in ZXing)</option>
+  <option value="https://upload.wikimedia.org/wikipedia/en/f/f4/LiveBarcodeApp.jpg">Another QR code in its habitat</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Wikipedia_mobile_en.svg/200px-Wikipedia_mobile_en.svg.png">Not working QR (transparency?)</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/3/3c/Datamatrix.png">Datamatrix code (not working)</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/9494-RI476394652CH.jpg/500px-9494-RI476394652CH.jpg">Code 128</option>
+  <option value="https://upload.wikimedia.org/wikipedia/commons/b/bb/EAN-Obst.jpg">EAN code</option>
+</select>
+<br>
+
+<script src="demo.bundle.js"></script>
+</body>
+<footer></footer>
